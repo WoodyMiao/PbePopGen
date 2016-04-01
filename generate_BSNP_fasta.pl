@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 die "This program generate fasta using reference and BSNP output.\nAuther: Woody
-Usage: $0 <reference.fa> <SNP.gz> <nSNP> <output.fa.gz> <mean coverage> <1=male|0=female>\n" if @ARGV < 6;
+Usage: $0 <reference.fa> <SNP.gz> <nSNP> <output.fa.gz> <mean coverage> <1=male|2=female>\n" if @ARGV < 6;
 
 open REF, "<", $ARGV[0];
 open SNP, "-|", "zcat $ARGV[1]";
@@ -40,14 +40,16 @@ while (<SNP>) {
 		next;
 	}
 	next if substr($ref{$a[0]}, $a[1], 1) eq "N";
-	if ($ARGV[5]) {
+	if ($ARGV[5] == 1) {
 		if ($a[0] eq "chrX") {
 			next if ($a[30] < $minc/2) or ($a[30] > $maxc/2);
 		} else {
 			next if ($a[30] < $minc) or ($a[30] > $maxc);
 		}
-	} else {
+	} elsif ($ARGV[5] == 2) {
 		next if ($a[30] < $minc) or ($a[30] > $maxc);
+	} else {
+		warn;
 	}
 #	my @rq = split //, $a[-2]; # Read Quality Scores
 #	my @aq = split //, $a[-1]; # Align Quality Scores
@@ -78,8 +80,17 @@ while (<NSN>) {
 	my @c = split //, $a[3];
 	foreach (0 .. $a[2]-1) {
 		my $cover = ord($c[$_]) - 33;
-		next if ($cover < $minc) or ($cover > $maxc);
-		next if (($ARGV[5] eq "male") and ($a[0] eq "chrX") and (($cover < $minc/2) or ($cover > $maxc/2)));
+		if ($ARGV[5] == 1) {
+			if ($a[0] eq "chrX") {
+				next if ($cover < $minc/2) or ($cover > $maxc/2);
+			} else {
+				next if ($cover < $minc) or ($cover > $maxc);
+			}
+		} elsif ($ARGV[5] == 2) {
+			next if ($cover < $minc) or ($cover > $maxc);
+		} else {
+			warn;
+		}
 #		if (ord($b[$_]) >= 53) { # P(is a SNP) <= 0.0001
 		my $coor = $a[1] + $_; # 0 based coordinate
 		if ($coor >= $len{$a[0]}) {
