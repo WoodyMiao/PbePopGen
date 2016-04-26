@@ -56,13 +56,7 @@ while (readline $file{$id[0]}) {
 			++$base{$b};
 		}
 		my $nb = keys %base;
-		if ($base{N}) {
-			next;
-#			next if $nb == 2;
-#			next if $base{N} > 10;
-		} else {
-			next unless $nb == 2;
-		}
+		next if $base{N} > 9;
 		for (0 .. @id-1) {
 			$chr_gt{$chr0}[$_] .= $base[$_];
 		}

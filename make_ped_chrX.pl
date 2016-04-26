@@ -44,11 +44,7 @@ for my $coo (0 .. $chrXlen-1) {
 		++$base{$b};
 	}
 	my $nb = keys %base;
-	if ($base{N}) {
-		next;
-	} else {
-		next unless $nb == 2;
-	}
+	next if $base{N} > 9;
 	for (0 .. @id-1) {
 		$chr_gt{X}[$_] .= $base[$_];
 	}
