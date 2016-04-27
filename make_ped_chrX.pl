@@ -43,8 +43,13 @@ for my $coo (0 .. $chrXlen-1) {
 		push @base, $b;
 		++$base{$b};
 	}
-	my $nb = keys %base;
-	next if $base{N} > 9;
+	my $nk = keys %base;
+	if ($base{N}) {
+		next if $base{N} > 9;
+		next if $nk == 2;
+	} else {
+		next if $nk == 1;
+	}
 	for (0 .. @id-1) {
 		$chr_gt{X}[$_] .= $base[$_];
 	}
